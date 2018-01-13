@@ -30,7 +30,7 @@ public class Sha1 {
         System.arraycopy(message, chunks * 64, buffer, 0, buffer.length);
         // update the chunks in the message
         updateInternal(message);
-        messageLength += chunks * 8L;
+        messageLength += chunks * 512L;
     }
 
     private void updateInternal(byte[] chunks) {
@@ -120,7 +120,7 @@ public class Sha1 {
     public static void main(String[] args) throws Exception {
         final Base64.Encoder base64 = Base64.getEncoder();
         final Random random = new Random();
-        final byte[] part1 = new byte[65];
+        final byte[] part1 = new byte[129];
         random.nextBytes(part1);
 
 //        final byte[] part2 = new byte[721];

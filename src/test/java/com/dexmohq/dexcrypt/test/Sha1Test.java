@@ -33,7 +33,6 @@ public class Sha1Test {
             md.update(buffer);
             sha1.update(buffer);
         }
-        System.out.println(Base64.getEncoder().encodeToString(md.digest()));
-        System.out.println(Base64.getEncoder().encodeToString(sha1.digest()));
+        Assert.assertArrayEquals(md.digest(), sha1.digest());
     }
 }

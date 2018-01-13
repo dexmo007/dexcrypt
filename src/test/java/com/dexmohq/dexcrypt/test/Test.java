@@ -1,12 +1,13 @@
 package com.dexmohq.dexcrypt.test;
 
+import java.io.File;
+
 public class Test {
 
     public static void main(String[] args) {
-        System.out.println((Long.toString(Long.MAX_VALUE)));
-        System.out.println((Long.toString(Long.MAX_VALUE + 1)));
-        System.out.println((Long.toString(Long.MAX_VALUE + 2)));
-        System.out.println((Long.toString(Long.MIN_VALUE)));
+        final String fileName = "/home/dexmo/Downloads/ideaIU-2017.3.2.tar.gz";
+
+        System.out.println(new File(fileName).exists());
     }
 
 
