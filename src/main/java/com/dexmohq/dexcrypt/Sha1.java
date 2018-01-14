@@ -2,7 +2,6 @@ package com.dexmohq.dexcrypt;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
 
@@ -11,29 +10,21 @@ import static java.lang.Integer.rotateLeft;
 /**
  * SHA-1 implementation according to pseudo code found at <a href="https://en.wikipedia.org/wiki/SHA-1">Wikipedia</a>
  */
-public class Sha1 {
+public class Sha1 extends ShaAlgorithm {
 
     // init variables
-    int h0 = 0x67452301;
-    int h1 = 0xEFCDAB89;
-    int h2 = 0x98BADCFE;
-    int h3 = 0x10325476;
-    int h4 = 0xC3D2E1F0;
+    private int h0 = 0x67452301;
+    private int h1 = 0xEFCDAB89;
+    private int h2 = 0x98BADCFE;
+    private int h3 = 0x10325476;
+    private int h4 = 0xC3D2E1F0;
 
-    private byte[] buffer = new byte[0];
-    private long messageLength = 0;
-
-    public void update(byte[] message) {
-        // strip remainder into a buffer
-        final int chunks = message.length / 64;
-        buffer = new byte[message.length - chunks * 64];
-        System.arraycopy(message, chunks * 64, buffer, 0, buffer.length);
-        // update the chunks in the message
-        updateInternal(message);
-        messageLength += chunks * 512L;
+    public Sha1() {
+        super(64);
     }
 
-    private void updateInternal(byte[] chunks) {
+    @Override
+    protected void updateInternal(byte[] chunks) {
         for (int chunk = 0; chunk < chunks.length / 64; chunk++) {
             final int[] words = new int[80];
             // break chunk into 32 bit words
@@ -80,27 +71,8 @@ public class Sha1 {
         }
     }
 
-    private void updateBuffer() {
-        // pad the message
-        int ml = buffer.length;
-        final byte[] chunk = Arrays.copyOf(buffer, 64);
-        chunk[ml] = (byte) 0x80;
-        messageLength += ml * 8L;
-        if (ml + 9 > 64) {
-            updateInternal(chunk);
-            final byte[] last = new byte[64];
-            final byte[] mlBits = ByteBuffer.allocate(Long.BYTES).putLong(messageLength).array();
-            System.arraycopy(mlBits, 0, last, 64 - 8, 8);
-            updateInternal(last);
-        } else {
-            final byte[] mlBits = ByteBuffer.allocate(Long.BYTES).putLong(messageLength).array();
-            System.arraycopy(mlBits, 0, chunk, 64 - 8, 8);
-            updateInternal(chunk);
-        }
-    }
-
-    public byte[] digest() {
-        updateBuffer();
+    @Override
+    protected byte[] digestInternal() {
         // final 160-bit hash value
         final ByteBuffer hhBuffer = ByteBuffer.allocate(20);
         hhBuffer.putInt(h0);
@@ -111,10 +83,9 @@ public class Sha1 {
         return hhBuffer.array();
     }
 
-    public static byte[] hash(byte[] message) {
-        final Sha1 sha1 = new Sha1();
-        sha1.update(message);
-        return sha1.digest();
+    @Override
+    protected ShaAlgorithm clone() {
+        return new Sha1();
     }
 
     public static void main(String[] args) throws Exception {
@@ -123,28 +94,35 @@ public class Sha1 {
         final byte[] part1 = new byte[129];
         random.nextBytes(part1);
 
-//        final byte[] part2 = new byte[721];
-//        random.nextBytes(part2);
-//
-//        final byte[] complete = new byte[part1.length + part2.length];
-//        System.arraycopy(part1, 0, complete, 0, part1.length);
-//        System.arraycopy(part2, 0, complete, part1.length, part2.length);
-//
-//        final MessageDigest partialMd = MessageDigest.getInstance("SHA1");
-//
-//        partialMd.update(part1);
-//        partialMd.update(part2);
-//        System.out.println(base64.encodeToString(partialMd.digest()));
-//        final MessageDigest completeMd = MessageDigest.getInstance("SHA1");
-//
-//        System.out.println(base64.encodeToString(completeMd.digest(complete)));
+        final byte[] part2 = new byte[1847];
+        random.nextBytes(part2);
+
+        final byte[] complete = new byte[part1.length + part2.length];
+        System.arraycopy(part1, 0, complete, 0, part1.length);
+        System.arraycopy(part2, 0, complete, part1.length, part2.length);
+
+        System.out.println("========================");
+        System.out.println("=======  PARTIAL  ======");
+        System.out.println("========================\n");
 
         final MessageDigest md = MessageDigest.getInstance("SHA1");
         md.update(part1);
-        final byte[] digestHash = md.digest();
+        md.update(part2);
+        System.out.println(base64.encodeToString(md.digest()));
 
-        System.out.println(base64.encodeToString(digestHash));
-        System.out.println(base64.encodeToString(hash(part1)));
+        final Sha1 sha1 = new Sha1();
+        sha1.update(part1);
+        sha1.update(part2);
+        System.out.println(base64.encodeToString(sha1.digest()));
+
+        System.out.println("\n========================");
+        System.out.println("======  COMPLETE  ======");
+        System.out.println("========================\n");
+
+        final MessageDigest cmd = MessageDigest.getInstance("SHA1");
+        System.out.println(base64.encodeToString(cmd.digest(complete)));
+
+        System.out.println(base64.encodeToString(new Sha1().digest(complete)));
     }
 
 }
