@@ -1,4 +1,4 @@
-package com.dexmohq.dexcrypt;
+package com.dexmohq.dexcrypt.hashing;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -48,19 +48,19 @@ public abstract class ShaAlgorithm implements Cloneable {
 
     protected abstract void updateInternal(byte[] chunks);
 
-    protected int messageLengthBits = Long.BYTES;
+    protected int messageLengthBytes = Long.BYTES;
 
     private void updateBuffer() {//todo optimize
         // pad the message
         final int ml = buffer.length;
         byte[] chunk = Arrays.copyOf(buffer, chunkSize);
         chunk[ml] = (byte) 0x80;
-        if (ml + 1 + messageLengthBits > chunkSize) {
+        if (ml + 1 + messageLengthBytes > chunkSize) {
             updateInternal(chunk);
             chunk = new byte[chunkSize];
         }
         final byte[] mlBits = getMessageLengthBytes();
-        System.arraycopy(mlBits, 0, chunk, chunkSize - messageLengthBits, messageLengthBits);
+        System.arraycopy(mlBits, 0, chunk, chunkSize - messageLengthBytes, messageLengthBytes);
         updateInternal(chunk);
     }
 

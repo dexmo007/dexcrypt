@@ -1,14 +1,13 @@
 package com.dexmohq.dexcrypt.test;
 
-import com.dexmohq.dexcrypt.Sha1;
-import com.dexmohq.dexcrypt.Sha256;
-import com.dexmohq.dexcrypt.Sha512;
-import com.dexmohq.dexcrypt.ShaAlgorithm;
+import com.dexmohq.dexcrypt.hashing.*;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.Random;
 
 public class ShaTest {
@@ -40,7 +39,27 @@ public class ShaTest {
 
     @Test
     public void testSha512Large() throws Exception {
-        testLarge(new Sha512(),"SHA-512",4752,1000);
+        testLarge(new Sha512(), "SHA-512", 4752, 1000);
+    }
+
+    @Test
+    public void testSha384Incremental() throws Exception {
+        testIncremental(new Sha384(), "SHA-384", 10_000);
+    }
+
+    @Test
+    public void testSha384Large() throws Exception {
+        testLarge(new Sha384(), "SHA-384", 4281, 1000);
+    }
+
+    @Test
+    public void testSha224Incremental() throws Exception {
+        testIncremental(new Sha224(), "SHA-224", 10_000);
+    }
+
+    @Test
+    public void testSha224Large() throws Exception {
+        testLarge(new Sha224(), "SHA-224", 3127, 1000);
     }
 
     /*

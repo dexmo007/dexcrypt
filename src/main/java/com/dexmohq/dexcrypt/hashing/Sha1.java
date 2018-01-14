@@ -1,4 +1,4 @@
-package com.dexmohq.dexcrypt;
+package com.dexmohq.dexcrypt.hashing;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;

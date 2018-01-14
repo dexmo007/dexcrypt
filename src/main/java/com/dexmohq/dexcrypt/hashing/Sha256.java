@@ -1,4 +1,4 @@
-package com.dexmohq.dexcrypt;
+package com.dexmohq.dexcrypt.hashing;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -10,16 +10,16 @@ import static java.lang.Integer.rotateRight;
 
 public class Sha256 extends ShaAlgorithm {
 
-    private int h0 = 0x6a09e667;
-    private int h1 = 0xbb67ae85;
-    private int h2 = 0x3c6ef372;
-    private int h3 = 0xa54ff53a;
-    private int h4 = 0x510e527f;
-    private int h5 = 0x9b05688c;
-    private int h6 = 0x1f83d9ab;
-    private int h7 = 0x5be0cd19;
+    protected int h0 = 0x6a09e667;
+    protected int h1 = 0xbb67ae85;
+    protected int h2 = 0x3c6ef372;
+    protected int h3 = 0xa54ff53a;
+    protected int h4 = 0x510e527f;
+    protected int h5 = 0x9b05688c;
+    protected int h6 = 0x1f83d9ab;
+    protected int h7 = 0x5be0cd19;
 
-    private static final int[] k = {
+    protected static final int[] k = {
             0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
             0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
             0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,

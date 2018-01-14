@@ -1,4 +1,4 @@
-package com.dexmohq.dexcrypt;
+package com.dexmohq.dexcrypt.hashing;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -46,13 +46,13 @@ public class Sha512 extends ShaAlgorithm {//todo fix big integer as counter, as 
     public Sha512() {
         // SHA-512 uses 1024 bit chunks
         super(128);
-//        messageLengthBits = 16;//128-bit uint for length
+        messageLengthBytes = 16;//128-bit uint for length
     }
 
-//    @Override
-//    protected void updateMessageLengthBits(long messageBits) {
-//        bits = bits.add(BigInteger.valueOf(messageBits));
-//    }
+    @Override
+    protected void updateMessageLengthBits(long messageBits) {
+        bits = bits.add(BigInteger.valueOf(messageBits));
+    }
 
     @Override
     protected void updateInternal(byte[] chunks) {
@@ -104,12 +104,10 @@ public class Sha512 extends ShaAlgorithm {//todo fix big integer as counter, as 
         }
     }
 
-//    @Override
-//    protected byte[] getMessageLengthBytes() {
-//        totalMessageBits = bits.longValue();
-//        return Arrays.copyOf(super.getMessageLengthBytes(), messageLengthBits);
-//        return Arrays.copyOf(bits.toByteArray(), messageLengthBits);
-//    }
+    @Override
+    protected byte[] getMessageLengthBytes() {
+        return bigIntToByteArray(bits, 16);
+    }
 
     @Override
     protected byte[] digestInternal() {
@@ -131,14 +129,29 @@ public class Sha512 extends ShaAlgorithm {//todo fix big integer as counter, as 
     }
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    private static byte[] bigIntToByteArray(BigInteger bigInteger, int maxBytes) {
+        final byte[] bytes = bigInteger.toByteArray();
+        if (bytes.length == maxBytes) {
+            return bytes;
+        } else if (bytes.length < maxBytes) {
+            final byte[] res = new byte[maxBytes];
+            System.arraycopy(bytes, 0, res, res.length - bytes.length, bytes.length);
+            return res;
+        }
+        final byte[] res = new byte[maxBytes];
+        System.arraycopy(bytes, bytes.length - res.length, res, 0, res.length);
+        return res;
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
