@@ -50,7 +50,7 @@ public abstract class ShaAlgorithm implements Cloneable {
 
     protected int messageLengthBytes = Long.BYTES;
 
-    private void updateBuffer() {//todo optimize
+    protected void updateBuffer() {//todo optimize
         // pad the message
         final int ml = buffer.length;
         byte[] chunk = Arrays.copyOf(buffer, chunkSize);

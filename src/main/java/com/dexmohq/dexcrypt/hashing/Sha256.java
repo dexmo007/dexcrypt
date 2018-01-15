@@ -98,6 +98,12 @@ public class Sha256 extends ShaAlgorithm {
         return buffer.array();
     }
 
+    public boolean test(byte[] input) {
+        update(input);
+        updateBuffer();
+        return (h0 & 0xffff_0000) == 0;
+    }
+
     @Override
     protected ShaAlgorithm clone() {
         return new Sha256();
