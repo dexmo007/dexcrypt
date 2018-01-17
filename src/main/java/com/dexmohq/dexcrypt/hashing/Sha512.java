@@ -9,7 +9,7 @@ import java.util.Random;
 
 import static java.lang.Long.rotateRight;
 
-public class Sha512 extends ShaAlgorithm {//todo fix big integer as counter, as 16-byte value
+public class Sha512 extends ShaAlgorithm {
 
     public static final int ROUNDS = 80;
 

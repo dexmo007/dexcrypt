@@ -3,7 +3,7 @@ package com.dexmohq.dexcrypt.hashing;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public abstract class ShaAlgorithm implements Cloneable {
+public abstract class ShaAlgorithm implements Cloneable {//todo more efficient single byte[] hash, for blockchains
 
     protected byte[] buffer = new byte[0];
     /*
@@ -90,4 +90,24 @@ public abstract class ShaAlgorithm implements Cloneable {
 
     @Override
     protected abstract ShaAlgorithm clone() throws CloneNotSupportedException;
+
+    //todo abstract reset
+
+    public byte[] hashSingle(byte[] message) {
+        // discarding buffer
+        final int msgLen = message.length;
+        int chunkCount  = (msgLen + 8) / chunkSize + 1;
+        final int paddedLength = chunkCount * chunkSize;
+        final byte[] padded = new byte[paddedLength];
+
+        System.arraycopy(message, 0, padded, 0, msgLen);
+        padded[msgLen] = (byte) 0x80;
+
+        final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES).putLong(msgLen * 8L);
+        buffer.rewind();
+        buffer.get(padded, paddedLength - Long.BYTES, Long.BYTES);
+
+        updateInternal(padded);
+        return digestInternal();
+    }
 }
