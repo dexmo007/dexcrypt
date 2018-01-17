@@ -1,5 +1,7 @@
 package com.dexmohq.dexcrypt;
 
+import com.dexmohq.dexcrypt.hashing.Sha256;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class Blockchain {
 
-    private int mineSeq(String data) {
+    public int mineSeq(String data) {
         int nonce = 0;// treated as unsigned
         final MessageDigest md = newSha256Digest();
         final byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
@@ -32,11 +34,49 @@ public class Blockchain {
         throw new IllegalStateException("No nonce found");
     }
 
-    private int mineParallel(String data) {
+    public int mineSeqDex(String data) {
+        int nonce = 0;// treated as unsigned
+        final byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+        final byte[] input = new byte[bytes.length + Integer.BYTES];
+        System.arraycopy(bytes, 0, input, 4, bytes.length);
+        do {
+            input[0] = (byte) (nonce & 0xff);
+            input[1] = (byte) ((nonce >>> 4) & 0xff);
+            input[2] = (byte) ((nonce >>> 8) & 0xff);
+            input[3] = (byte) ((nonce >>> 12) & 0xff);
+            final byte[] hashBytes = new Sha256().digest(input);
+            if (hashBytes[0] == 0 && hashBytes[1] == 0) {
+                return nonce;
+            }
+            nonce++;
+        } while (nonce != 0);//while nonce reaches zero again due to numeric overflow -> we tested all 4-byte ints
+        throw new IllegalStateException("No nonce found");
+    }
+
+    public int mineSeqDexOpt(String data) {
+        int nonce = 0;// treated as unsigned
+        final byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+        final byte[] input = new byte[bytes.length + Integer.BYTES];
+        System.arraycopy(bytes, 0, input, 4, bytes.length);
+        do {
+            input[0] = (byte) (nonce & 0xff);
+            input[1] = (byte) ((nonce >>> 4) & 0xff);
+            input[2] = (byte) ((nonce >>> 8) & 0xff);
+            input[3] = (byte) ((nonce >>> 12) & 0xff);
+            final byte[] hashBytes = new Sha256().hashSingle(input);
+            if (hashBytes[0] == 0 && hashBytes[1] == 0) {
+                return nonce;
+            }
+            nonce++;
+        } while (nonce != 0);//while nonce reaches zero again due to numeric overflow -> we tested all 4-byte ints
+        throw new IllegalStateException("No nonce found");
+    }
+
+    public int mineParallel(String data) {
         return mineParallel(data, Runtime.getRuntime().availableProcessors());
     }
 
-    private int mineParallel(String data, int parallelism) {
+    public int mineParallel(String data, int parallelism) {
         final ExecutorService es = Executors.newFixedThreadPool(parallelism);
         final ArrayList<Callable<Integer>> tasks = new ArrayList<>();
         final byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
@@ -50,9 +90,9 @@ public class Blockchain {
                 int nonce = starting;
                 do {
                     input[0] = (byte) (nonce & 0xff);
-                    input[1] = (byte) ((nonce >>> 4) & 0xff);
-                    input[2] = (byte) ((nonce >>> 8) & 0xff);
-                    input[3] = (byte) ((nonce >>> 12) & 0xff);
+                    input[1] = (byte) ((nonce >>> 8) & 0xff);
+                    input[2] = (byte) ((nonce >>> 16) & 0xff);
+                    input[3] = (byte) ((nonce >>> 24) & 0xff);
                     final byte[] hashBytes = md.digest(input);
                     if (hashBytes[0] == 0 && hashBytes[1] == 0) {
                         return nonce;
