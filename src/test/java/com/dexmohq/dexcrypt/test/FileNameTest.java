@@ -1,10 +1,8 @@
 package com.dexmohq.dexcrypt.test;
 
-import com.dexmohq.dexcrypt.FileUtils;
+import com.dexmohq.dexcrypt.util.FileUtils;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-
-import static com.dexmohq.dexcrypt.FileUtils.getFinalName;
 
 public class FileNameTest {
 

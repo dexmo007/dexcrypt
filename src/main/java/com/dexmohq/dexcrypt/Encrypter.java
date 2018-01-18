@@ -1,5 +1,6 @@
 package com.dexmohq.dexcrypt;
 
+import com.dexmohq.dexcrypt.util.FileUtils;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 
@@ -12,14 +13,15 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.*;
 import java.util.zip.*;
 
 public class Encrypter {
 
-    public static final int EOF = -1;
+    /**
+     * The end of file flag
+     */
+    private static final int EOF = -1;
 
     private static byte[] randomIv(int size) throws NoSuchAlgorithmException {
         final SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -60,10 +62,10 @@ public class Encrypter {
         out.close();
     }
 
-    public static int BUFFER_SIZE = 4096;
+    public static int DEFAULT_BUFFER_SIZE = 4096;
 
     private static byte[] newBuffer() {
-        return new byte[BUFFER_SIZE];
+        return new byte[DEFAULT_BUFFER_SIZE];
     }
 
     private static InputStream zipFolder(String fullPath) throws IOException {
@@ -76,7 +78,7 @@ public class Encrypter {
         final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(new File(zipFile)));//todo prevent overwrite
 
         int read;
-        final byte[] buffer = new byte[BUFFER_SIZE];
+        final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 
 
         final File[] files = dir.listFiles();
@@ -176,8 +178,8 @@ public class Encrypter {
 
         final File file = new File(fileName);
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream(BUFFER_SIZE);
+            final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
             final ZipOutputStream zipped = new ZipOutputStream(byteBuffer);
             zipped.putNextEntry(new ZipEntry(file.getName()));
             final CipherOutputStream out = new CipherOutputStream(new BufferedOutputStream(new FileOutputStream(new File(fileName + ".secret"))), cipher);
@@ -201,7 +203,7 @@ public class Encrypter {
 
             final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(fileName.substring(0, fileName.length() - ".secret".length()))));
 
-            final byte[] buffer = new byte[BUFFER_SIZE];
+            final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 
             int read;
             in.getNextEntry();

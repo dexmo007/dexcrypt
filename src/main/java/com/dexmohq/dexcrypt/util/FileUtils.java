@@ -1,4 +1,4 @@
-package com.dexmohq.dexcrypt;
+package com.dexmohq.dexcrypt.util;
 
 import com.google.common.io.Files;
 
