@@ -154,13 +154,4 @@ public class Sha512 extends ShaAlgorithm {
         return res;
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        final Base64.Encoder base64 = Base64.getEncoder();
-
-        final byte[] message = new byte[112];
-        new Random().nextBytes(message);
-        System.out.println(base64.encodeToString(MessageDigest.getInstance("SHA-512").digest(message)));
-        System.out.println(base64.encodeToString(new Sha512().digest(message)));
-    }
-
 }

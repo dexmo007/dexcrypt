@@ -7,6 +7,11 @@ import java.io.File;
 public class FileUtils {
 
     /**
+     * The end of file flag
+     */
+    public static final int EOF = -1;
+
+    /**
      * strips the given extension from the given full path file reference; does nothing if extension is not present
      *
      * @param fullPath  full path reference to a file
@@ -21,7 +26,7 @@ public class FileUtils {
         return fullPath.substring(0, fullPath.length() - maybeExtension.length() - 1);
     }
 
-    public static String getFinalName(String fileName) {
+    public static String getDecryptedName(String fileName) {
         // strip .dxp if exists
         fileName = stripFileExtension(fileName, "dxp");
 

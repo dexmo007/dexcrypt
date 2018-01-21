@@ -104,17 +104,6 @@ public class Md5 extends ShaAlgorithm {//todo fix buggy
         return new Md5();
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-
-        final byte[] bytes = "helloworld!!!!!!!!!!!!!!".getBytes(StandardCharsets.UTF_8);
-
-        final MessageDigest md5 = MessageDigest.getInstance("MD5");
-        System.out.println(BaseEncoding.base16().encode(md5.digest(bytes)).toLowerCase());
-        System.out.println(BaseEncoding.base16().encode(new Md5().digest(bytes)).toLowerCase());
-        System.out.println(BaseEncoding.base16().encode(MD5.computeMD5(bytes)).toLowerCase());
-    }
-
-
     static class MD5 {
 
         private static final int INIT_A = 0x67452301;

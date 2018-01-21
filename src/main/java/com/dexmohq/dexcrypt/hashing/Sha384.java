@@ -40,16 +40,4 @@ public class Sha384 extends Sha512 {
         return new Sha384();
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        final Random random = new Random();
-        final byte[] bytes = new byte[0];
-        random.nextBytes(bytes);
-        final Base64.Encoder base64 = Base64.getEncoder();
-        final byte[] my = new Sha384().digest(bytes);
-        System.out.println(my.length);
-        System.out.println(base64.encodeToString(my));
-        final byte[] java = MessageDigest.getInstance("SHA-384").digest(bytes);
-        System.out.println(java.length);
-        System.out.println(base64.encodeToString(java));
-    }
 }

@@ -88,41 +88,4 @@ public class Sha1 extends ShaAlgorithm {
         return new Sha1();
     }
 
-    public static void main(String[] args) throws Exception {
-        final Base64.Encoder base64 = Base64.getEncoder();
-        final Random random = new Random();
-        final byte[] part1 = new byte[129];
-        random.nextBytes(part1);
-
-        final byte[] part2 = new byte[1847];
-        random.nextBytes(part2);
-
-        final byte[] complete = new byte[part1.length + part2.length];
-        System.arraycopy(part1, 0, complete, 0, part1.length);
-        System.arraycopy(part2, 0, complete, part1.length, part2.length);
-
-        System.out.println("========================");
-        System.out.println("=======  PARTIAL  ======");
-        System.out.println("========================\n");
-
-        final MessageDigest md = MessageDigest.getInstance("SHA1");
-        md.update(part1);
-        md.update(part2);
-        System.out.println(base64.encodeToString(md.digest()));
-
-        final Sha1 sha1 = new Sha1();
-        sha1.update(part1);
-        sha1.update(part2);
-        System.out.println(base64.encodeToString(sha1.digest()));
-
-        System.out.println("\n========================");
-        System.out.println("======  COMPLETE  ======");
-        System.out.println("========================\n");
-
-        final MessageDigest cmd = MessageDigest.getInstance("SHA1");
-        System.out.println(base64.encodeToString(cmd.digest(complete)));
-
-        System.out.println(base64.encodeToString(new Sha1().digest(complete)));
-    }
-
 }
